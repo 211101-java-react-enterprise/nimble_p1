@@ -19,6 +19,15 @@ public class ConnectionFactory {
     //get method returns the singleton Connection Factory to customer function
     public static ConnectionFactory getInstance(){return connectionFactory;}
 
+    static {
+        try {
+            // Forcibly load the PostgreSQL Driver into JVM memory so that it can create a connection
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     //load properties file for further action
     private ConnectionFactory() {
         try {
