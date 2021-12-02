@@ -1,0 +1,7 @@
+#git ignore for nimble
+
+/target
+/.idea
+*.jar
+*.class
+*.properties
