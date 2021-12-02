@@ -39,7 +39,7 @@ public class OrmServiceDriver {
         return true;
     }
 
-    public Object creating(Object object) throws IllegalAccessException, InstantiationException {
+    public <T> T creating(T object) throws IllegalAccessException, InstantiationException {
         if (annotationChecker(object.getClass())) {
             statement = new Insert(object).toSQL();
             try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
@@ -57,7 +57,7 @@ public class OrmServiceDriver {
         return null;
     }
 
-    public <T> T reading(Class tableName, T keyValue) throws IllegalAccessException, InstantiationException {
+    public <T, S> T reading(Class tableName, S keyValue) throws IllegalAccessException, InstantiationException {
         if (annotationChecker(tableName)) {
             statement = new Select(tableName, keyValue).toSQL();
             try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
