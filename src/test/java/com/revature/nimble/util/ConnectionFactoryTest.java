@@ -1,6 +1,6 @@
 package com.revature.nimble.util;
 
-import com.revature.nimble.util.ConnectionFactory;
+import com.revature.nimble.util.connections.ConnectionFactory;
 import org.junit.Assert;
 import org.junit.Test;
 

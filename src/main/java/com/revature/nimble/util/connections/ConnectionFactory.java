@@ -1,4 +1,4 @@
-package com.revature.nimble.util;
+package com.revature.nimble.util.connections;
 
 import java.io.IOException;
 import java.sql.Connection;
