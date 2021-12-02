@@ -1,5 +1,9 @@
 package com.revature.nimble;
 
+import com.revature.nimble.annotations.Column;
+import com.revature.nimble.annotations.Key;
+import com.revature.nimble.annotations.Table;
+import com.revature.nimble.exceptions.MissingAnnotationException;
 import com.revature.nimble.util.converters.ToObjectConverter;
 import com.revature.nimble.util.sqlmakers.Delete;
 import com.revature.nimble.util.sqlmakers.Insert;
@@ -12,76 +16,97 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 public class OrmServiceDriver {
-    Object object;
     String statement;
 
-    public OrmServiceDriver(Object object){
-        this.object=object;
-    }
     public OrmServiceDriver(){}
 
-    public Object saving() throws IllegalAccessException, InstantiationException {
-        statement= new Insert(this.object).toSQL();
-        try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
-            //prepare SQl statements
-            PreparedStatement pstmt = conn.prepareStatement(statement);
-            //Execute SQL query and return new user
-            int rowsInserted = pstmt.executeUpdate();
-            if (rowsInserted != 0) {return object;}
-        } catch (SQLException e) {
-            e.printStackTrace();
+
+    //Helper function: check if annotation present
+    private <T> boolean annotationChecker(Class<T> targetType){
+        if (!targetType.isAnnotationPresent(Table.class)){//if given class missing table mapping, throws exception
+            throw new MissingAnnotationException("No Annotation found on"+targetType.toString());
+        }
+        else {//if any fields under such class missing column mapping, throws exception
+            Arrays.stream(targetType.getDeclaredFields()).forEach(field -> {
+                if (!(field.isAnnotationPresent(Column.class)||field.isAnnotationPresent(Key.class))){
+                    throw new MissingAnnotationException("No Annotation found on "+field.toString());
+                }
+            });
+        }
+        return true;
+    }
+
+    public Object creating(Object object) throws IllegalAccessException, InstantiationException {
+        if (annotationChecker(object.getClass())) {
+            statement = new Insert(object).toSQL();
+            try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
+                //prepare SQl statements
+                PreparedStatement pstmt = conn.prepareStatement(statement);
+                //Execute SQL query and return new user
+                int rowsInserted = pstmt.executeUpdate();
+                if (rowsInserted != 0) {
+                    return object;
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
 
     public <T> T reading(Class tableName, T keyValue) throws IllegalAccessException, InstantiationException {
-        statement=new Select(tableName,keyValue).toSQL();
-        try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
-            //prepare SQl statements
-            PreparedStatement pstmt = conn.prepareStatement(statement);
-            //Execute SQL query and return new user
-            ResultSet resultSet = pstmt.executeQuery();
-            if(resultSet!=null){
-                return (T) new ToObjectConverter(tableName,resultSet).toObject();
+        if (annotationChecker(tableName)) {
+            statement = new Select(tableName, keyValue).toSQL();
+            try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
+                //prepare SQl statements
+                PreparedStatement pstmt = conn.prepareStatement(statement);
+                //Execute SQL query and return new user
+                ResultSet resultSet = pstmt.executeQuery();
+                if (resultSet != null) {
+                    return (T) new ToObjectConverter(tableName, resultSet).toObject();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return null;
     }
 
 
     public <T> boolean delete(Class<T> tableName, T fieldName) throws IllegalAccessException, InstantiationException {
-        statement=new Delete(tableName,fieldName).toSQL();
-        try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
-            //prepare SQl statements
-            System.out.println(statement);
-            PreparedStatement pstmt = conn.prepareStatement(statement);
-            //Execute SQL query and return new user
-            int result = pstmt.executeUpdate();
-            if(result!=0){
-                return true;
+        if (annotationChecker(tableName)) {
+            statement = new Delete(tableName, fieldName).toSQL();
+            try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
+                //prepare SQl statements
+                PreparedStatement pstmt = conn.prepareStatement(statement);
+                //Execute SQL query and return new user
+                int result = pstmt.executeUpdate();
+                if (result != 0) {
+                    return true;
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return false;
     }
     public <T> boolean update(Class<T> tableName, T keyValue, Field f, T fieldValue) throws IllegalAccessException, InstantiationException {
-        statement=new Update(tableName,keyValue,f,fieldValue).toSQL();
-        try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
-            //prepare SQl statements
-            System.out.println(statement);
-            PreparedStatement pstmt = conn.prepareStatement(statement);
-            //Execute SQL query and return new user
-            int result = pstmt.executeUpdate();
-            if(result!=0){
-                return true;
+        if (annotationChecker(tableName)) {
+            statement = new Update(tableName, keyValue, f, fieldValue).toSQL();
+            try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
+                //prepare SQl statements
+                PreparedStatement pstmt = conn.prepareStatement(statement);
+                //Execute SQL query and return new user
+                int result = pstmt.executeUpdate();
+                if (result != 0) {
+                    return true;
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return false;
     }

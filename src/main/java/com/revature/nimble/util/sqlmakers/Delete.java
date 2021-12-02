@@ -3,7 +3,7 @@ package com.revature.nimble.util.sqlmakers;
 import com.revature.nimble.annotations.Key;
 import com.revature.nimble.annotations.Table;
 
-import java.lang.reflect.Field;
+import java.util.Arrays;
 
 public class Delete extends SqlStatementGenerator {
     public <T> Delete(Class table, T keyValue){
@@ -12,18 +12,14 @@ public class Delete extends SqlStatementGenerator {
     }
 
     @Override
-    public String toSQL() throws IllegalAccessException, InstantiationException {
-        if(tableType.isAnnotationPresent(Table.class)) {
-            tableName = ((Table) tableType.getAnnotation(Table.class)).tableName();
-            Field[] fields = tableType.getDeclaredFields();
-            for (Field field : fields) {//traversal attributes
-                if (field.isAnnotationPresent(Key.class))key=field.getAnnotation(Key.class).keyName();
-            }
-            sql_statement = "Delete from " + tableName + " where " + key + " = " + "'" + keyValue.toString() + "';";
-            return sql_statement;
-        }
-        else{
-            return null;
-        }
+    public String toSQL() {
+        //Get table name mapped to the type
+        tableName = ((Table) tableType.getAnnotation(Table.class)).tableName();
+        //Going through the fields of such class, find key
+        Arrays.stream(tableType.getDeclaredFields()).forEach(field -> {
+            if (field.isAnnotationPresent(Key.class)) key = field.getAnnotation(Key.class).keyName();
+        });
+        sql_statement = "Delete from " + tableName + " where " + key + " = " + "'" + keyValue.toString() + "';";
+        return sql_statement;
     }
 }

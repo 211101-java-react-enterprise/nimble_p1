@@ -5,31 +5,28 @@ import com.revature.nimble.annotations.Key;
 import com.revature.nimble.annotations.Table;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 
 public class Update<T> extends SqlStatementGenerator{
-    String fieldName;
-    T fieldValue;
-    public Update(Class table, T keyValue, Field field, T fieldValue){
+    String updatingField;
+    T updateValue;
+    public Update(Class table, T keyValue, Field updatingField, T updateValue){
         super.tableType =table;
         super.keyValue=keyValue;
-        this.fieldName=((Column)field.getAnnotation(Column.class)).columnName();
-        this.fieldValue=fieldValue;
+        this.updatingField =updatingField.getAnnotation(Column.class).columnName();
+        this.updateValue =updateValue;
     }
 
     @Override
-    public String toSQL() throws IllegalAccessException, InstantiationException {
-        if(tableType.isAnnotationPresent(Table.class)) {
-            tableName = ((Table) tableType.getAnnotation(Table.class)).tableName();
-            Field[] fields = tableType.getDeclaredFields();
-            for (Field field : fields) {//traversal attributes
-                if (field.isAnnotationPresent(Key.class))key=field.getAnnotation(Key.class).keyName();
-            }
-            sql_statement = "Update " + tableName + " set " + fieldName+"= '"+ fieldValue+
-                            "' where " +key + " = " + "'" + keyValue.toString() + "';";
-            return sql_statement;
-        }
-        else{
-            return null;
-        }
+    public String toSQL(){
+        //get table name mapped to given class
+        tableName = ((Table) tableType.getAnnotation(Table.class)).tableName();
+        //Going through fields of the class and find key name
+        Arrays.stream(tableType.getDeclaredFields()).forEach(field -> {
+            if (field.isAnnotationPresent(Key.class)) key = field.getAnnotation(Key.class).keyName();
+        });
+        sql_statement = "Update " + tableName + " set " + updatingField + "= '" + updateValue +
+                "' where " + key + " = " + "'" + keyValue.toString() + "';";
+        return sql_statement;
     }
 }

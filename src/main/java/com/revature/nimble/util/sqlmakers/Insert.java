@@ -3,58 +3,52 @@ package com.revature.nimble.util.sqlmakers;
 import com.revature.nimble.annotations.Column;
 import com.revature.nimble.annotations.Key;
 import com.revature.nimble.annotations.Table;
+import com.revature.nimble.exceptions.WrongAnnotationException;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class Insert extends SqlStatementGenerator{
     private HashMap entries=new HashMap();
 
-
     public Insert(Object object) {
-        targetObject=object;
+        savingObject =object;
     }
 
     @Override
-    public String toSQL() throws IllegalAccessException, InstantiationException {
-        //Prepare Information needed to generate sql statement
-        Class tableClass=targetObject.getClass();
-        if(tableClass.isAnnotationPresent(Table.class)){//Check annotation exist
-            //get table Name
-            tableName =((Table)targetObject.getClass().getAnnotation(Table.class)).tableName();
-            //get fields of an object, generate a Map to store field:column_name pair
-            Field[] fields = targetObject.getClass().getDeclaredFields();
-            for (Field field : fields) {
+    public String toSQL() throws IllegalAccessException{
+        tableName = savingObject.getClass().getAnnotation(Table.class).tableName();
+        //get fields of an object, generate a Map to store field:column_name pair
+        Arrays.stream(savingObject.getClass().getDeclaredFields()).forEach(field -> {
+            try {
                 if (field.isAnnotationPresent(Key.class)) {
-                    String fieldname=(field.getAnnotation(Key.class).keyName()).toString();
-                    Object fieldValue=field.get(targetObject);
-                    entries.put(fieldname, fieldValue);
+                    String fieldName = (field.getAnnotation(Key.class).keyName());
+                    Object fieldValue = field.get(savingObject);
+                    entries.put(fieldName, fieldValue);
+                } else if (field.isAnnotationPresent(Column.class)) {
+                    String fieldName = (field.getAnnotation(Column.class).columnName());
+                    Object fieldValue = field.get(savingObject);
+                    entries.put(fieldName, fieldValue);
+                }else {//We checked annotation existing in driver, if not column nor key, must be wrong annotation applied
+                    throw new WrongAnnotationException("Wrong Annotation Applied to field"+field.getName());
                 }
-                else if(field.isAnnotationPresent(Column.class)){
-                    String fieldname=(field.getAnnotation(Column.class).columnName()).toString();
-                    Object fieldValue=field.get(targetObject);
-                    entries.put(fieldname, fieldValue);
-                }
-                else{
-                    System.out.println("Invalid fields: Missing Annotation");
-                }
+            }catch (IllegalAccessException e){
+                e.printStackTrace();
             }
-        }
-        else{
-            System.out.println("Invalid Object provided: Missing Annotation");
-        }
-
-        sql_statement ="insert into "+ tableName +"";
-        StringBuffer value=new StringBuffer();
-        StringBuffer tablename=new StringBuffer();
-        entries.keySet().stream().forEach(entry -> {
-            tablename.append(entry.toString()+",");
-            value.append(" '"+entries.get(entry) +"' ,");
         });
-        String table_t=tablename.substring(0,tablename.length()-1);
-        String value_v=value.substring(0, value.length()-1);
 
-        sql_statement = sql_statement.concat(" ("+table_t+") "+"values ("+value_v+");");
+        //Don't know how to generate string right out of hashmap in such pattern.... use stringBuffer as alternative
+        StringBuffer valueList=new StringBuffer();
+        StringBuffer fieldNameList=new StringBuffer();
+        entries.keySet().stream().forEach(entry -> {
+            fieldNameList.append(entry.toString()+",");
+            valueList.append(" '"+entries.get(entry) +"' ,");
+        });
+        String columns=fieldNameList.substring(0,fieldNameList.length()-1);
+        String values=valueList.substring(0, valueList.length()-1);
+
+        sql_statement = "insert into "+ tableName +" ("+columns+") "+"values ("+values+");";
         return sql_statement;
     }
 }

@@ -10,9 +10,9 @@ public class TempUsers {
     @Column(columnName = "username")
     public String username;
     @Key(keyName = "id")
-    public String id;
+    public int id;
 
-    public TempUsers(String username, String id){
+    public TempUsers(String username, int id){
         this.username=username;
         this.id=id;
     }
@@ -26,11 +26,11 @@ public class TempUsers {
         this.username = username;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 }

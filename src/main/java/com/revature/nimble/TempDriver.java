@@ -17,15 +17,21 @@ public class TempDriver {
         BufferedReader consolReader = new BufferedReader(new InputStreamReader(System.in));
 
         System.out.println("Welcome Please Input you info");
-
-//        String statement = new Select(test).toSQL();
-//        System.out.println(statement);
-//        String insert=new Insert(test).toSQL();
-//        System.out.println(insert);
+        System.out.println("id");
+        int id=Integer.parseInt(consolReader.readLine());
+        System.out.println("username");
+        String username=consolReader.readLine();
+        TempUsers test=new TempUsers(username,id);
         TempDao dao=new TempDao();
         TempServcie servcie=new TempServcie(dao);
-        TempUsers users= servcie.isUser("123");
-        System.out.println("Username: "+users.getUsername()+" Id: "+users.getId());
+        System.out.println(servcie.register(test));
+        //System.out.println(servcie.delete(TempUsers.class,4));
+//        System.out.println(servcie.isUser("3").getUsername());
+//        if(servcie.update(TempUsers.class,3,TempUsers.class.getField("username"),"HelloWorld!")){
+//            System.out.println(servcie.isUser("3").getUsername());
+//        }
+//        TempUsers users= servcie.isUser("123");
+//        System.out.println("Username: "+users.getUsername()+" Id: "+users.getId());
         //System.out.println(servcie.register(test));
         //System.out.println(servcie.update(TempUsers.class, "2" ,TempUsers.class.getDeclaredField("username"), "HelloWorld"));
 

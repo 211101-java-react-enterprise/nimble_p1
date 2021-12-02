@@ -19,8 +19,8 @@ public class TempDao{
 //        return null;
 //    }
     public Object insert(Object newObj) throws IllegalAccessException, InstantiationException {
-        OrmServiceDriver s=new OrmServiceDriver(newObj);
-        return s.saving();
+        OrmServiceDriver s=new OrmServiceDriver();
+        return s.creating(newObj);
     }
     public <T> T findById(String keyValue) throws IllegalAccessException, InstantiationException {
         OrmServiceDriver s=new OrmServiceDriver();
