@@ -13,14 +13,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class OrmService {
+public class OrmServiceDriver {
     Object object;
     String statement;
 
-    public OrmService(Object object){
+    public OrmServiceDriver(Object object){
         this.object=object;
     }
-    public OrmService(){}
+    public OrmServiceDriver(){}
 
     public Object saving() throws IllegalAccessException, InstantiationException {
         statement= new Insert(this.object).toSQL();

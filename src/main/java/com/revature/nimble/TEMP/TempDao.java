@@ -1,9 +1,8 @@
 package com.revature.nimble.TEMP;
 
-import com.revature.nimble.OrmService;
+import com.revature.nimble.OrmServiceDriver;
 
 import java.lang.reflect.Field;
-import java.util.List;
 
 public class TempDao{
 
@@ -20,21 +19,19 @@ public class TempDao{
 //        return null;
 //    }
     public Object insert(Object newObj) throws IllegalAccessException, InstantiationException {
-        //TODO: ORM Service class
-        OrmService s=new OrmService(newObj);
-        System.out.println("inserting");
+        OrmServiceDriver s=new OrmServiceDriver(newObj);
         return s.saving();
     }
     public <T> T findById(String keyValue) throws IllegalAccessException, InstantiationException {
-        OrmService s=new OrmService();
+        OrmServiceDriver s=new OrmServiceDriver();
         return (T) s.reading(TempUsers.class, keyValue);
     }
     public <T> boolean removeById(Class<T> type, T keyValue) throws IllegalAccessException, InstantiationException {
-        OrmService s=new OrmService();
+        OrmServiceDriver s=new OrmServiceDriver();
         return s.delete(type,keyValue);
     }
     public <T> boolean update(Class<T> type, T keyValue, Field f, T fieldValue) throws IllegalAccessException, InstantiationException {
-        OrmService s=new OrmService();
+        OrmServiceDriver s=new OrmServiceDriver();
         return s.update(type,keyValue,f,fieldValue);
     }
 

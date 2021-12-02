@@ -10,7 +10,7 @@ public class Update<T> extends SqlStatementGenerator{
     String fieldName;
     T fieldValue;
     public Update(Class table, T keyValue, Field field, T fieldValue){
-        super.table=table;
+        super.tableType =table;
         super.keyValue=keyValue;
         this.fieldName=((Column)field.getAnnotation(Column.class)).columnName();
         this.fieldValue=fieldValue;
@@ -18,9 +18,9 @@ public class Update<T> extends SqlStatementGenerator{
 
     @Override
     public String toSQL() throws IllegalAccessException, InstantiationException {
-        if(table.isAnnotationPresent(Table.class)) {
-            tableName = ((Table) table.getAnnotation(Table.class)).tableName();
-            Field[] fields = table.getDeclaredFields();
+        if(tableType.isAnnotationPresent(Table.class)) {
+            tableName = ((Table) tableType.getAnnotation(Table.class)).tableName();
+            Field[] fields = tableType.getDeclaredFields();
             for (Field field : fields) {//traversal attributes
                 if (field.isAnnotationPresent(Key.class))key=field.getAnnotation(Key.class).keyName();
             }
