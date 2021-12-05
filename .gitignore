@@ -1,7 +1,14 @@
 #git ignore for nimble
 
-/target
-/.idea
-*.jar
+# IDE-specific files
+.idea/
+*.iml
+
+# Compiled/Packaged files and directories
+out/
+target/
 *.class
+*.jar
+
+# Properties files
 *.properties
