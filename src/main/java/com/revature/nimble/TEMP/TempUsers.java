@@ -11,6 +11,8 @@ public class TempUsers {
     public String username;
     @Key(keyName = "id")
     public int id;
+    @Column(columnName = "note")
+    public String note;
 
     public TempUsers(String username, int id){
         this.username=username;

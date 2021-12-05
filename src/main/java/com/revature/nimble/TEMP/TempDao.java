@@ -3,6 +3,7 @@ package com.revature.nimble.TEMP;
 import com.revature.nimble.OrmServiceDriver;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
 public class TempDao{
 
@@ -33,6 +34,10 @@ public class TempDao{
     public <T> boolean update(Class<T> type, T keyValue, Field f, T fieldValue) throws IllegalAccessException, InstantiationException {
         OrmServiceDriver s=new OrmServiceDriver();
         return s.update(type,keyValue,f,fieldValue);
+    }
+    public <T> List<TempUsers> selectall(Field type, T searchValue) throws IllegalAccessException, InstantiationException {
+        OrmServiceDriver s=new OrmServiceDriver();
+        return s.reading(TempUsers.class,type,searchValue);
     }
 
 

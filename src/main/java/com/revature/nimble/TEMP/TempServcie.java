@@ -1,6 +1,7 @@
 package com.revature.nimble.TEMP;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
 public class TempServcie {
     TempDao dao;
@@ -21,5 +22,9 @@ public class TempServcie {
     }
     public <T> boolean update (Class objectClass, T keyValue, Field f, T fieldValue) throws IllegalAccessException, InstantiationException {
         return dao.update(objectClass,keyValue,f,fieldValue);
+    }
+
+    public <T> List<TempUsers> selectall(Field columnName, T searchValue) throws IllegalAccessException, InstantiationException {
+        return dao.selectall(columnName,searchValue);
     }
 }

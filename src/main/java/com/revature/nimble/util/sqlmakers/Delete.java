@@ -19,7 +19,9 @@ public class Delete extends SqlStatementGenerator {
         Arrays.stream(tableType.getDeclaredFields()).forEach(field -> {
             if (field.isAnnotationPresent(Key.class)) key = field.getAnnotation(Key.class).keyName();
         });
-        sql_statement = "Delete from " + tableName + " where " + key + " = " + "'" + keyValue.toString() + "';";
+        //call key value setter to properly handle different datatype
+        super.setKeyValueString();
+        sql_statement = "Delete from " + tableName + " where " + key +keyValueString+ ";";
         return sql_statement;
     }
 }

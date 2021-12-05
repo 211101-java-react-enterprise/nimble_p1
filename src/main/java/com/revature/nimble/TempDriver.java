@@ -7,29 +7,34 @@ import com.revature.nimble.TEMP.TempUsers;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.List;
 
 public class TempDriver {
 
     //TODO: Temp Driver for testing purpose
-    public static void main(String[] args) throws IllegalAccessException, InstantiationException, IOException, NoSuchFieldException {
+    public static <T> void main(String[] args) throws IllegalAccessException, InstantiationException, IOException, NoSuchFieldException {
 
         //prepare a
-        BufferedReader consolReader = new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
 
         System.out.println("Welcome Please Input you info");
         System.out.println("id");
-        int id=Integer.parseInt(consolReader.readLine());
+        int id=Integer.parseInt(consoleReader.readLine());
         System.out.println("username");
-        String username=consolReader.readLine();
+        String username=consoleReader.readLine();
         TempUsers test=new TempUsers(username,id);
         TempDao dao=new TempDao();
         TempServcie servcie=new TempServcie(dao);
-        System.out.println(servcie.register(test));
-        //System.out.println(servcie.delete(TempUsers.class,4));
-//        System.out.println(servcie.isUser("3").getUsername());
-//        if(servcie.update(TempUsers.class,3,TempUsers.class.getField("username"),"HelloWorld!")){
-//            System.out.println(servcie.isUser("3").getUsername());
+//        List<TempUsers> usersList=servcie.selectall(TempUsers.class.getField("note"),null);
+//        for(TempUsers t: usersList){
+//            System.out.println(t.getUsername()+"  :  "+t.getId());
 //        }
+        //System.out.println(servcie.delete(TempUsers.class,4));
+//        if(servcie.isUser(null)==null) System.out.println("Empty");
+        if(servcie.update(TempUsers.class,4,TempUsers.class.getField("username"),"HappyQi")){
+            System.out.println(servcie.isUser("4").getUsername());
+        }
 //        TempUsers users= servcie.isUser("123");
 //        System.out.println("Username: "+users.getUsername()+" Id: "+users.getId());
         //System.out.println(servcie.register(test));
