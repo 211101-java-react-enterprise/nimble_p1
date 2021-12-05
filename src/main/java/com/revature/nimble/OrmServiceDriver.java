@@ -95,7 +95,7 @@ public class OrmServiceDriver {
 
 
 
-    public <T> boolean delete(Class<T> tableName, T fieldName) {
+    public <T,S> boolean delete(Class<T> tableName, S fieldName) {
         if (annotationChecker(tableName)) {
             statement = new Delete(tableName, fieldName).toSQL();
             try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
@@ -112,7 +112,7 @@ public class OrmServiceDriver {
         }
         return false;
     }
-    public <T> boolean update(Class<T> tableName, T keyValue, Field f, T fieldValue) {
+    public <T,S> boolean update(Class<T> tableName, S keyValue, Field f, S fieldValue) {
         if (annotationChecker(tableName)) {
             statement = new Update(tableName, keyValue, f, fieldValue).toSQL();
             try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
