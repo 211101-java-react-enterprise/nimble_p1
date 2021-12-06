@@ -65,6 +65,7 @@ public class OrmServiceDriver {
                 //Execute SQL query and return new user
                 ResultSet resultSet = pstmt.executeQuery();
                 if (resultSet != null) {
+                    //returning the whole table using list object helper function
                     return (List<T>) new ListObjectConverter<>(tableType, resultSet).obtainList();
                 }
             } catch (SQLException e) {
@@ -83,6 +84,7 @@ public class OrmServiceDriver {
                 //Execute SQL query and return new user
                 ResultSet resultSet = pstmt.executeQuery();
                 if (resultSet.next()) {
+                    //use a helper function to return the desired object
                     return (T) new ToObjectConverter(tableType, resultSet).toObject();
                 }
             } catch (SQLException e) {
@@ -101,6 +103,7 @@ public class OrmServiceDriver {
                 //Execute SQL query and return new user
                 ResultSet resultSet = pstmt.executeQuery();
                 if (resultSet != null) {
+                    //there could be multiple entities return, use helper function to get a list of object
                     return (List<T>) new ListObjectConverter<>(tableName, resultSet).obtainList();
                 }
             } catch (SQLException e) {
