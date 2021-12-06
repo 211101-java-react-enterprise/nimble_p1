@@ -12,6 +12,10 @@ public class SelectAll<S> extends SqlStatementGenerator{
     private String columnName;
     private S searchValue;
 
+    public SelectAll(Class tableName) {
+        tableType=tableName;
+    }
+
     public SelectAll(Class tableName, Field columnName, S searchValue) {
         tableType=tableName;
         this.columnName=columnName.getName();
@@ -25,6 +29,13 @@ public class SelectAll<S> extends SqlStatementGenerator{
         //going through the fields and find key name
         String searchingValue=super.valueToStringHelper(searchValue);
         sql_statement = "Select * from " + tableName + " where " + columnName +searchingValue+";";
+        return sql_statement;
+    }
+
+    public String star() {
+        tableName = ((Table) tableType.getAnnotation(Table.class)).tableName();
+        sql_statement = "Select * from " + tableName + " ;";
+
         return sql_statement;
     }
 }

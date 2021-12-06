@@ -56,6 +56,24 @@ public class OrmServiceDriver {
         return null;
     }
 
+    public <T> List<T> reading(Class tableType) throws IllegalAccessException, InstantiationException {
+        if (annotationChecker(tableType)) {
+            statement = new SelectAll(tableType).star();
+            try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
+                //prepare SQl statements
+                PreparedStatement pstmt = conn.prepareStatement(statement);
+                //Execute SQL query and return new user
+                ResultSet resultSet = pstmt.executeQuery();
+                if (resultSet != null) {
+                    return (List<T>) new ListObjectConverter<>(tableType, resultSet).obtainList();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
     public <T, S> T reading(Class tableType, S keyValue) throws IllegalAccessException, InstantiationException {
         if (annotationChecker(tableType)) {
             statement = new Select(tableType, keyValue).toSQL();

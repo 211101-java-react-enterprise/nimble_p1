@@ -23,8 +23,8 @@ abstract class SqlStatementGenerator<T> {
         //in case of null: " is null "
         if(value==null) return" is null ";
         //in case of String "= 'keyValue' "
-        else if(value.getClass()==String.class) return" = '"+keyValue.toString()+"' ";
+        else if(value.getClass()==String.class) return" = '"+value.toString()+"' ";
         //in case of other object just to string "= keyValue"
-        else return " = "+keyValue.toString()+" ";
+        else return " = "+value.toString()+" ";
     }
 }
