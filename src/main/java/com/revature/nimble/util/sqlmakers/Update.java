@@ -25,8 +25,9 @@ public class Update<T> extends SqlStatementGenerator{
         Arrays.stream(tableType.getDeclaredFields()).forEach(field -> {
             if (field.isAnnotationPresent(Key.class)) key = field.getAnnotation(Key.class).keyName();
         });
+        super.setKeyValueString();
         sql_statement = "Update " + tableName + " set " + updatingField + "= '" + updateValue +
-                "' where " + key + " = " + "'" + keyValue.toString() + "';";
+                "' where " + key +keyValueString+ ";";
         return sql_statement;
     }
 }

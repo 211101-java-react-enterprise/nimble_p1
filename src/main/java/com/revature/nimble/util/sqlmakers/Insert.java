@@ -19,7 +19,7 @@ public class Insert extends SqlStatementGenerator{
     @Override
     public String toSQL() throws IllegalAccessException{
         tableName = savingObject.getClass().getAnnotation(Table.class).tableName();
-        //get fields of an object, generate a Map to store field:column_name pair
+        //get all fields of an object, generate a Map to store field_name:column_name pair
         Arrays.stream(savingObject.getClass().getDeclaredFields()).forEach(field -> {
             try {
                 if (field.isAnnotationPresent(Key.class)) {
@@ -43,12 +43,19 @@ public class Insert extends SqlStatementGenerator{
         StringBuffer fieldNameList=new StringBuffer();
         entries.keySet().stream().forEach(entry -> {
             fieldNameList.append(entry.toString()+",");
-            valueList.append(" '"+entries.get(entry) +"' ,");
+            valueList.append(toStringHelper(entries.get(entry)) +" ,");
         });
         String columns=fieldNameList.substring(0,fieldNameList.length()-1);
         String values=valueList.substring(0, valueList.length()-1);
 
         sql_statement = "insert into "+ tableName +" ("+columns+") "+"values ("+values+");";
         return sql_statement;
+    }
+
+
+    private <T> String toStringHelper(T value){
+        if(value==null)return " null ";
+        else if(value.getClass()==String.class)return " '"+value+"' ";
+        else return " "+value.toString()+" ";
     }
 }

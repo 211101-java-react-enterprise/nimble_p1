@@ -19,27 +19,22 @@ public class ToObjectConverter<T> {
     }
 
     public T toObject() throws InstantiationException, IllegalAccessException, SQLException {
-        if (table.isAnnotationPresent(Table.class)) {
-            if (resultSet.next()) {
-                object= table.newInstance();
-                Field[] fields = object.getClass().getDeclaredFields();
-                for (Field field : fields) {//traversal attributes
-                    if (field.isAnnotationPresent(Column.class)) {//With Column annotations
-                        String column = field.getAnnotation(Column.class).columnName();//Getting annotation information
-                        field.set(object, resultSet.getObject(column));
-                    } else if (field.isAnnotationPresent(Key.class)) {
-                        String key = field.getAnnotation(Key.class).keyName();
-                        field.set(object, resultSet.getObject(key));
-                    }
-
+        try {
+            object = table.newInstance();
+            Field[] fields = object.getClass().getDeclaredFields();
+            for (Field field : fields) {//traversal attributes
+                if (field.isAnnotationPresent(Column.class)) {//With Column annotations
+                    String column = field.getAnnotation(Column.class).columnName();//Getting annotation information
+                    field.set(object, resultSet.getObject(column));
+                } else if (field.isAnnotationPresent(Key.class)) {
+                    String key = field.getAnnotation(Key.class).keyName();
+                    field.set(object, resultSet.getObject(key));
                 }
             }
-            return object;
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        else{
-            System.out.println("Missing Annotation");
-        }
-        return null;
+        return object;
     }
 
 }

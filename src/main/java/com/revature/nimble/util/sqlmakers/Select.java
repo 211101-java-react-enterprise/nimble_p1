@@ -7,8 +7,8 @@ import java.util.Arrays;
 
 public class Select<T> extends SqlStatementGenerator{
 
-    public Select(Class tableType,T keyValue ){
-        super.tableType =tableType;
+    public Select(Class tableType, T keyValue){
+        this.tableType =tableType;
         this.keyValue =keyValue;
     }
 
@@ -20,7 +20,8 @@ public class Select<T> extends SqlStatementGenerator{
         Arrays.stream(tableType.getDeclaredFields()).forEach(field -> {
             if (field.isAnnotationPresent(Key.class)) key = field.getName();
         });
-        sql_statement = "Select * from " + tableName + " where " + key + " = " + "'" + keyValue.toString() + "';";
+        super.setKeyValueString();
+        sql_statement = "Select * from " + tableName + " where " +key+keyValueString+";";
         return sql_statement;
     }
 }
